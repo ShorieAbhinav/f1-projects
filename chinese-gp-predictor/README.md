@@ -1,4 +1,4 @@
-# 🏎️ F1 Race Predictor — Monte Carlo Simulation
+# 🏎️ Chinese GP Predictor — Monte Carlo Simulation
 
 A race winner prediction system for Formula 1 that combines 
 a weighted scoring model with Monte Carlo simulation to produce 
