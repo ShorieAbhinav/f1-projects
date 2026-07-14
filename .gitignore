@@ -1,0 +1,6 @@
+belgian-gp-predictor/cache/
+chinese-gp-predictor/cache/
+__pycache__/
+*.pyc
+*.sqlite
+.DS_Store
