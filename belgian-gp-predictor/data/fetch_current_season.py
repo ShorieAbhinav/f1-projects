@@ -14,7 +14,7 @@ def fetch_round(round_number: int)-> pd.DataFrame:
     session.load()
 
     results = session.results[
-        ["DriverNumber", "Abbreviation", "TeamName", "GridPosition", "Position",
+        ["DriverNumber", "Abbreviation","FullName", "TeamName", "GridPosition", "Position",
         "Status", "Points"]
     ].copy()
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     print(f"\nSaved {len(enriched)} rows to season_2026_form.csv")
 
     driver_summary = enriched[
-        ["Abbreviation", "TeamName", "SeasonAvgFinish", "SeasonAvgPoints",
+        ["Abbreviation","FullName", "TeamName", "SeasonAvgFinish", "SeasonAvgPoints",
          "SeasonDNFRate", "TeamSeasonAvgFinish"]
     ].drop_duplicates(subset="Abbreviation").sort_values("SeasonAvgPoints", ascending=False)
 

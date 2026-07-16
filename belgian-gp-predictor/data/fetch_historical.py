@@ -17,7 +17,7 @@ def fetch_year(year: int) -> pd.DataFrame:
     session.load()
 
     # Session datas has many columns we only want to keep the ones we need
-    results = session.results[["DriverNumber", "Abbreviation","TeamName", "GridPosition", "Position", "Status", "Points"]].copy()
+    results = session.results[["DriverNumber", "Abbreviation","FullName","TeamName", "GridPosition", "Position", "Status", "Points"]].copy()
     results["Year"] = year
     results["DNF"] = ~results["Status"].str.contains("Finished", na=False)
 
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     # just the weighted summary columns, sorted best to worst.
 
     summary = enriched[
-        ["Abbreviation", "SpaWeightedAvgFinish", "SpaWeightedDNFRate", "SpaRaces"]
+        ["Abbreviation","FullName", "SpaWeightedAvgFinish", "SpaWeightedDNFRate", "SpaRaces"]
     ].drop_duplicates().sort_values(by="SpaWeightedAvgFinish")
     
     print("\nPer-driver Spa summary (recency-weighted):")
