@@ -58,6 +58,44 @@ X_2026 = predict_data[["GridPosition", "TeamYearAvgFinish"]]
 
 predict_data["PredictedFinish"] = model.predict(X_2026)
 
+# Blend model prediction with the driver's actual 2026 season form.
+# The model only sees grid + team; this pulls the prediction toward
+# how each driver is genuinely performing this season individually.
+# ── Bring in practice race pace and blend three signals ──────────
+
+practice = pd.read_csv("../data/belgian_gp_practice_pace.csv")
+
+# Convert practice pace into an implied finishing position (1 = fastest
+# race pace). This puts it on the same 1-22 scale as the other signals
+# so they can be blended sensibly.
+practice = practice.sort_values("PracticePaceSeconds").reset_index(drop=True)
+practice["PracticeRank"] = practice.index + 1
+
+predict_data = predict_data.merge(
+    practice[["Abbreviation", "PracticeRank"]], on="Abbreviation", how="left"
+)
+
+# Some drivers may lack practice data (missed the session, etc.) —
+# fall back to their model prediction for those rows so nothing breaks.
+predict_data["PracticeRank"] = predict_data["PracticeRank"].fillna(
+    predict_data["PredictedFinish"]
+)
+
+# Grid position (via the model) anchors the prediction — Spa's chaos
+# coefficient (~3.44) is moderate, so most drivers finish near their
+# grid slot, and the deviations are better handled as Monte Carlo
+# variance than predicted deterministically. Practice pace and season
+# form are supporting adjustments, not primary drivers.
+MODEL_WEIGHT = 0.55
+PRACTICE_WEIGHT = 0.25
+FORM_WEIGHT = 0.20
+
+predict_data["PredictedFinish"] = (
+    PRACTICE_WEIGHT * predict_data["PracticeRank"]
+    + MODEL_WEIGHT * predict_data["PredictedFinish"]
+    + FORM_WEIGHT * predict_data["SeasonAvgFinish"]
+)
+
 result = predict_data[
     ["Abbreviation", "FullName", "GridPosition", "PredictedFinish"]
 ].sort_values("PredictedFinish")
