@@ -73,7 +73,21 @@ st.markdown("---")
 # Note: your simulation CSV doesn't carry TeamName, so bars use a
 # single F1-red. If you want team colors, add TeamName to the
 # simulation output in simulate.py and map it here like Chinese GP did.
-BAR_COLOR = "#e10600"
+# ── Team colors for the charts ─────────────────────────────────
+TEAM_COLORS = {
+    "Mercedes":         "#00D2BE",
+    "Ferrari":          "#DC0000",
+    "McLaren":          "#FF8000",
+    "Red Bull Racing":  "#3671C6",
+    "Alpine":           "#FF87BC",
+    "Haas F1 Team":     "#B6BABD",
+    "Racing Bulls":     "#6692FF",
+    "Audi":             "#E8002D",
+    "Williams":         "#64C4FF",
+    "Aston Martin":     "#358C75",
+    "Cadillac":         "#FFFFFF",
+}
+bar_colors = [TEAM_COLORS.get(team, "#888888") for team in results["TeamName"]]
 
 # ── Win probability bar chart ──────────────────────────────────
 st.subheader("🏁 Win Probability by Driver")
@@ -81,7 +95,7 @@ st.subheader("🏁 Win Probability by Driver")
 fig_win = go.Figure(go.Bar(
     x=results["FullName"],
     y=results["WinProbability"] * 100,
-    marker_color=BAR_COLOR,
+    marker_color=bar_colors,
     text=[f"{p*100:.1f}%" for p in results["WinProbability"]],
     textposition="outside",
     hovertemplate="<b>%{x}</b><br>Win: %{y:.2f}%<extra></extra>"
@@ -107,7 +121,7 @@ st.subheader("🏅 Podium Probability by Driver")
 fig_podium = go.Figure(go.Bar(
     x=results["FullName"],
     y=results["PodiumProbability"] * 100,
-    marker_color=BAR_COLOR,
+    marker_color=bar_colors,
     text=[f"{p*100:.1f}%" for p in results["PodiumProbability"]],
     textposition="outside",
     hovertemplate="<b>%{x}</b><br>Podium: %{y:.2f}%<extra></extra>"

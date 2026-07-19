@@ -8,7 +8,7 @@ predictions = pd.read_csv("../model/belgian_gp_2026_predictions.csv")
 features = pd.read_csv("../model/belgian_gp_features.csv")
 
 drivers = predictions.merge(
-    features[["Abbreviation", "FinalDNFRate"]], on="Abbreviation", how="left"
+    features[["Abbreviation", "FinalDNFRate", "TeamName"]], on="Abbreviation", how="left"
 )
 
 # Race-day rain probability from Sunday's forecast (~20-28%).
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     drivers["PodiumProbability"] = drivers["FullName"].map(podium_counts) / N_SIMULATIONS
 
     result = drivers[
-        ["FullName", "GridPosition", "PredictedFinish", "WinProbability", "PodiumProbability"]
+        ["FullName", "TeamName", "GridPosition", "PredictedFinish", "WinProbability", "PodiumProbability"]
     ].sort_values("WinProbability", ascending=False)
 
     result.to_csv("belgian_gp_2026_simulation.csv", index=False)
