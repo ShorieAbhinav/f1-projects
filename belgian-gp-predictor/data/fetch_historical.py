@@ -63,6 +63,33 @@ def add_recency_weighted_features(df):
 
     stats_df = pd.DataFrame(driver_stats)
     return df.merge(stats_df, on="Abbreviation", how="left")
+
+def compute_chaos_coefficient(df):
+    """
+    Average position change at Spa across all historical races.
+    Higher = more chaotic circuit where grid position matters less.
+    Lower = processional race where qualifying position is everything.
+    Same definition used in the Chinese GP project: mean absolute
+    difference between grid position and finish position.
+    """
+    position_changes = []
+
+    for _, row in df.iterrows():
+        grid = row.get("GridPosition")
+        finish = row.get("Position")
+
+        if grid and finish and grid > 0 and finish > 0:
+            change = abs(int(finish) - int(grid))
+            position_changes.append(change)
+
+    if len(position_changes) == 0:
+        print("No valid data - using default chaos coefficient")
+        return 3.5
+
+    coefficient = np.mean(position_changes)
+    print(f"\nSpa chaos coefficient: {coefficient:.2f}")
+    print(f"Based on {len(position_changes)} driver results")
+    return coefficient
     
 def add_driver_metadata(df):
     """ Add driver metadata from the driver_info.csv file """
@@ -76,6 +103,7 @@ if __name__ == "__main__":
     # elsewhere later. Standard Python convention for a script's entry point.
 
     raw = build_historical_dataset()
+    chaos_coefficient = compute_chaos_coefficient(raw)
 
     enriched = add_recency_weighted_features(raw)
     enriched.to_csv("belgian_gp_historical.csv", index = False)

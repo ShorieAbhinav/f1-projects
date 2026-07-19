@@ -7,7 +7,7 @@ fastf1.Cache.enable_cache("../cache")
 # Belgian GP is round 12, so we want ewvery race that's already
 #$ happened this season 1-11
 
-ROUNDS_SO_FAR = list(range(1,12))
+ROUNDS_SO_FAR = list(range(1,10))
 
 def fetch_round(round_number: int)-> pd.DataFrame:
     session = fastf1.get_session(2026, round_number, "R")
